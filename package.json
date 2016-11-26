@@ -1,0 +1,16 @@
+{
+  "name": "psychic_graffiti",
+  "version": "1.0.0",
+  "description": "our server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0",
+    "redis": "^2.6.3",
+    "socket.io": "^1.6.0"
+  }
+}
