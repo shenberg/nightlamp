@@ -47,6 +47,10 @@ var maxY = garden.clientHeight - ball.clientHeight;
 var touching = false;
 var ongoingTouches = [];
 
+function log(msg) {
+  console.log(msg);
+}
+
 function copyTouch(touch) {
   return { identifier: touch.identifier, pageX: touch.pageX, pageY: touch.pageY };
 }
@@ -96,7 +100,6 @@ function handleEnd(evt) {
   var touches = evt.changedTouches;
 
   for (var i = 0; i < touches.length; i++) {
-    var color = colorForTouch(touches[i]);
     var idx = ongoingTouchIndexById(touches[i].identifier);
 
     if (idx >= 0) {
@@ -160,20 +163,14 @@ function handleOrientation(event) {
   ball.style.top  = (maxX*x/180 - 10) + "px";
   ball.style.left = (maxY*y/180 - 10) + "px";
   var hasTouch = false;
-  for(var i in ongoingTouches.length) {
+  for(var i in ongoingTouches) {
   	if (ongoingTouches.hasOwnProperty(i) && ongoingTouches[i] !== undefined) {
   		hasTouch = true;
-  		//console.log("hasTouch");
+  		console.log("hasTouch");
   		break;
   	}
   }
-  //if (isDown) {
-  if (hasTouch)	{
-  	  el.innerHTML = "TOUCHING!!!!!!!!!";
-	  socket.emit("orientation", {"x": x, "y": y, "beta" : event.beta, "gamma" : event.gamma});
-  } else {
-  	  el.innerHTML = ":(";
-  }
+  socket.emit("orientation", {"x": x, "y": y, "beta" : event.beta, "gamma" : event.gamma, "touch": hasTouch});
 }
 var socket = io();
 window.addEventListener("deviceorientation", handleOrientation, true);
