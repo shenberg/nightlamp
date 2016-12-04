@@ -19,21 +19,26 @@
 	  background: green;
 	  border-radius: 100%;
 	}
-	.draw-button {
-		width: 90%;
-		height: 300px;
-	}
+
+  .noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Chrome/Safari/Opera */
+     -khtml-user-select: none; /* Konqueror */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  not supported by any browser */
+}
 	</style>
 	<script src="/socket.io/socket.io.js"></script>
 </head>
-	<body>
+	<body class="noselect">
 		blah this is html
 		<div class="garden">
 			<div class="ball">
 			</div>
 		</div>
 		<pre class="output"></pre>
-		<button class="draw-button">DRAW!</button>
 
 	<script>
 
@@ -121,7 +126,7 @@ function handleCancel(evt) {
 }
 
 //var el = document.body;
-var el = document.querySelector(".draw-button");
+var el = document.querySelector("body");
 
 el.addEventListener("touchstart", handleStart, false);
 el.addEventListener("touchend", handleEnd, false);
