@@ -175,7 +175,7 @@ function handleOrientation(event) {
   		break;
   	}
   }
-  socket.emit("orientation", {"x": x, "y": y, "beta" : event.beta, "gamma" : event.gamma, "touch": hasTouch});
+  socket.emit("orientation", {"x": x, "y": y, "beta" : event.beta, "gamma" : event.gamma, "alpha": event.alpha, "touch": hasTouch});
 }
 var socket = io();
 window.addEventListener("deviceorientation", handleOrientation, true);
