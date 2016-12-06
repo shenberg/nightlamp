@@ -50,8 +50,8 @@ function fixAngle(angle) {
   return angle;
 }
 function orientationToCursor(event) {
-  return {x: (fixAngle(event.alpha)/(-fovX)) + 0.5,
-          y: event.beta / (-fovY) + 0.5};
+  return {x: clamp01((fixAngle(event.alpha)/(-fovX)) + 0.5),
+          y: clamp01(event.beta / (-fovY) + 0.5)};
 }
 
 
@@ -76,8 +76,8 @@ function handleOrientation(event) {
 
   // 10 is half the size of the ball
   // It center the positioning point to the center of the ball
-  ball.style.top  = (maxX*res.y + 10) + "px";
-  ball.style.left = (maxY*res.x + 10) + "px";
+  ball.style.top  = (maxX*res.y) + "px";
+  ball.style.left = (maxY*res.x) + "px";
 }
 var socket = io();
 socket.emit("server-started");
