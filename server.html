@@ -18,7 +18,11 @@
 	  height: 20px;
 	  background: green;
 	  border-radius: 100%;
-	}	
+	}
+	#surface {
+		width: 1000px;
+		height: 1000px;
+	}
 	</style>
 	<script src="/socket.io/socket.io.js"></script>
 </head>
@@ -28,6 +32,8 @@
 			<div class="ball">
 			</div>
 		</div>
+		<canvas id="surface" width="1000" height="1000">
+		</canvas>
 		<pre class="output"></pre>
 
 	<script>
@@ -54,8 +60,26 @@ function orientationToCursor(event) {
           y: clamp01(event.beta / (-fovY) + 0.5)};
 }
 
+var canvas = document.querySelector("#surface");
+var ctx = canvas.getContext('2d');
+ctx.strokeStyle = "blue";
+var width = canvas.clientWidth;
+var height = canvas.clientHeight;
+
+var lastX = 0,
+	lastY = 0;
+
+var first = true;
+var firstX, firstY;
 
 function handleOrientation(event) {
+  if (first) {
+  	firstX = event.alpha;
+  	firstY = event.beta;
+  	first = false;
+  }
+  event.alpha -= firstX;
+  event.beta -= firstY;
 	/*
   var x = event.beta;  // In degree in the range [-180,180]
   var y = event.gamma; // In degree in the range [-90,90]
@@ -73,11 +97,19 @@ function handleOrientation(event) {
   x += 90;
   y += 90;*/
   var res = orientationToCursor(event);
+  ctx.beginPath();
+  ctx.moveTo(lastX*width, lastY*height);
+  ctx.lineTo(res.x*width, res.y*height);
+  ctx.stroke();
+  lastX = res.x;
+  lastY = res.y;
+  console.log(event.alpha);
 
   // 10 is half the size of the ball
   // It center the positioning point to the center of the ball
   ball.style.top  = (maxX*res.y) + "px";
   ball.style.left = (maxY*res.x) + "px";
+
 }
 var socket = io();
 socket.emit("server-started");
