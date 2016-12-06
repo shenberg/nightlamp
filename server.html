@@ -14,14 +14,19 @@
 	  position: absolute;
 	  top   : 90px;
 	  left  : 90px;
-	  width : 20px;
-	  height: 20px;
-	  background: green;
+	  width : 10px;
+	  height: 10px;
+	  background: yellow;
 	  border-radius: 100%;
 	}
 	#surface {
-		width: 1000px;
-		height: 1000px;
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		/*border: 2px solid #F00;*/
+	}
+	body {
+		background: black;
 	}
 	</style>
 	<script src="/socket.io/socket.io.js"></script>
@@ -31,9 +36,9 @@
 		<div class="garden">
 			<div class="ball">
 			</div>
+			<canvas id="surface" width="800" height="800">
+			</canvas>
 		</div>
-		<canvas id="surface" width="1000" height="1000">
-		</canvas>
 		<pre class="output"></pre>
 
 	<script>
