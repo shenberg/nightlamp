@@ -1,4 +1,5 @@
-classdef simpleClient < matWebSocketClient
+classdef nightClient < matWebSocketClient
+    
     %CLIENT Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -6,7 +7,7 @@ classdef simpleClient < matWebSocketClient
     end
     
     methods
-        function obj = simpleClient(URI)
+        function obj = nightClient(URI)
             %Constructor
             obj@matWebSocketClient(URI);
         end

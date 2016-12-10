@@ -1,4 +1,5 @@
 classdef matWebSocketClient < handle
+    
     %MATWEBSOCKETCLIENT matWebSocketClient is an ABSTRACT class that 
     % allows MATLAB to start a java-websocket client instance.
     %
