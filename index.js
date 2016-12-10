@@ -45,7 +45,7 @@ io.on('connection', function(socket){
 	}
   });
   socket.on("orientation", function(msg) {
-  	console.log("got message: (" + msg.x + "," + msg.y + "," + msg.touch + ")");
+  	console.log(msg.user_id + ": (" + msg.x + "," + msg.y + "," + msg.touch + ")");
   	for(var i = 0; i < serverSockets.length; i++) {
   		var server = serverSockets[i];
   		server.emit("orientation", msg);
@@ -56,7 +56,7 @@ io.on('connection', function(socket){
       //console.log("wrote");
     });*/
     if (matlabSocket) {
-      matlabSocket.send("1," + msg.x + "," + msg.y + "," + (+msg.touch));
+      matlabSocket.send(msg.user_id + "," + msg.x + "," + msg.y + "," + (+msg.touch));
     }
   });
   socket.on("server-started", function(msg) {

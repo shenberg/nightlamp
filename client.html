@@ -42,6 +42,39 @@
 
 	<script>
 
+function getUserId() {
+  return document.cookie.replace(/(?:(?:^|.*;\s*)user_id\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+}
+
+function setUserId(userId) {
+  document.cookie = "user_id=" + userId + "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+}
+
+// random number in range 1..2**32-1
+function randomUserId() {
+  var result = 0;
+  while (!result) {
+    if (window.crypto !== undefined && window.crypto.getRandomValues !== undefined) {
+      var res = new Uint32Array(1);
+      window.crypto.getRandomValues(res);
+      result = res[0];
+    } else {
+      result = Math.floor(Math.random() * ((1<<30)*4 - 1)) + 1;
+    }
+  }
+  return result;
+}
+
+var userId = getUserId();
+if (!userId) {
+  console.log("Generating User ID");
+  userId = randomUserId();
+  setUserId(userId);
+}
+console.log("User ID: " + userId);
+
+
+
 var ball   = document.querySelector('.ball');
 var garden = document.querySelector('.garden');
 var output = document.querySelector('.output');
@@ -192,7 +225,15 @@ function handleOrientation(event) {
   		break;
   	}
   }
-  socket.emit("orientation", {"x": xy.x, "y": xy.y, "beta" : event.beta, "gamma" : event.gamma, "alpha": event.alpha, "touch": hasTouch});
+  socket.emit("orientation", 
+    {
+      "x": xy.x, 
+      "y": xy.y, 
+      "user_id": userId,
+      /*"beta" : event.beta, 
+      "gamma" : event.gamma, 
+      "alpha": event.alpha, */
+      "touch": hasTouch});
 }
 var socket = io();
 window.addEventListener("deviceorientation", handleOrientation, true);
