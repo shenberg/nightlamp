@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+	.garden {
+	  position: relative;
+	  width : 800px;
+	  height: 800px;
+	  border: 5px solid #CCC;
+	  border-radius: 10px;
+	}
+
+	.ball {
+	  position: absolute;
+	  top   : 90px;
+	  left  : 90px;
+	  width : 10px;
+	  height: 10px;
+	  background: yellow;
+	  border-radius: 100%;
+	}
+	#surface {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		/*border: 2px solid #F00;*/
+	}
+	body {
+		background: black;
+	}
+	</style>
+	<script src="/socket.io/socket.io.js"></script>
+</head>
+	<body>
+		blah this is html
+		<div class="garden">
+			<div class="ball">
+			</div>
+			<canvas id="surface" width="800" height="800">
+			</canvas>
+		</div>
+		<pre class="output"></pre>
+
+	<script>
+
+var ball   = document.querySelector('.ball');
+var garden = document.querySelector('.garden');
+var output = document.querySelector('.output');
+
+var maxX = garden.clientWidth  - ball.clientWidth;
+var maxY = garden.clientHeight - ball.clientHeight;
+
+var fovX = 60;
+var fovY = 45;
+
+function clamp01(val) { if (val < 0) return 0; if (val > 1) return 1; return val; }
+
+function fixAngle(angle) {
+  if (angle > 180) return angle - 360;
+  if (angle < -180) return angle + 360;
+  return angle;
+}
+function orientationToCursor(event) {
+  return {x: clamp01((fixAngle(event.alpha)/(-fovX)) + 0.5),
+          y: clamp01(event.beta / (-fovY) + 0.5)};
+}
+
+var canvas = document.querySelector("#surface");
+var ctx = canvas.getContext('2d');
+ctx.strokeStyle = "blue";
+var width = canvas.clientWidth;
+var height = canvas.clientHeight;
+
+var lastX = 0,
+	lastY = 0;
+
+var first = true;
+
+function handleOrientation(event) {
+  if (first) {
+  	lastX = event.x;
+  	lastY = event.y;
+  	first = false;
+  	return;
+  }
+
+  ctx.beginPath();
+  ctx.moveTo(lastX*width, lastY*height);
+  ctx.lineTo(event.x*width, event.y*height);
+  ctx.stroke();
+  lastX = event.x;
+  lastY = event.y;
+  console.log(event.alpha);
+
+  // 10 is half the size of the ball
+  // It center the positioning point to the center of the ball
+  ball.style.top  = (maxX*event.y) + "px";
+  ball.style.left = (maxY*event.x) + "px";
+
+}
+var socket = io();
+socket.emit("server-started");
+//socket.on("orientation", handleOrientation);
+
+var ws = new WebSocket("ws://localhost:3001/");
+ws.onmessage = function(event) {
+	console.log('event.data');
+};
+
+	</script>
+
+	</body>
+</html>
