@@ -104,10 +104,10 @@ function handleOrientation(event) {
   var res = orientationToCursor(event);
   ctx.beginPath();
   ctx.moveTo(lastX*width, lastY*height);
-  ctx.lineTo(res.x*width, res.y*height);
+  ctx.lineTo(event.x*width, event.y*height);
   ctx.stroke();
-  lastX = res.x;
-  lastY = res.y;
+  lastX = event.x;
+  lastY = event.y;
   console.log(event.alpha);
 
   // 10 is half the size of the ball

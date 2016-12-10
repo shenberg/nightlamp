@@ -2,6 +2,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require('path');
+var fs = require('fs');
 
 app.get('/', function(req, res){
   res.sendFile('client.html', {root : __dirname});
@@ -10,7 +11,6 @@ app.get('/', function(req, res){
 app.get('/server', function(req, res){
   res.sendFile('server.html', {root : __dirname});
 });
-
 
 var serverSockets = [];
 
@@ -31,6 +31,10 @@ io.on('connection', function(socket){
   		var server = serverSockets[i];
   		server.emit("orientation", msg);
   	}
+    fs.writeFile("position.txt", "1," + msg.x + "," + msg.y + "," + msg.touch + "\n", (err) => { 
+      if (err) { throw err; } 
+      //console.log("wrote");
+    });
   });
   socket.on("server-started", function(msg) {
   	console.log("user is server!");
