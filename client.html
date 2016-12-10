@@ -141,6 +141,10 @@ function handleUp(evt) {
 	isDown = false;
 }
 
+var lastOrientation = {x: 0, y:0};
+var rawCenter = {alpha: 0, gamma: 0};
+var first = true;
+
 var fovX = 60;
 var fovY = 45;
 
@@ -162,6 +166,14 @@ function orientationToCursor(event) {
 console.log("initialized touch callbacks");
 
 function handleOrientation(event) {
+  if (first) {
+    rawCenter.alpha = event.alpha;
+    rawCenter.gamma = event.gamma;
+    first = false;
+  }
+
+  event.alpha -= rawCenter.alpha;
+  event.gamma -= rawCenter.gamma;
 
   output.innerHTML  = "alpha: " + event.alpha + "\n";
   output.innerHTML += "gamma: " + event.gamma + "\n";
