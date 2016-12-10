@@ -31,7 +31,7 @@ io.on('connection', function(socket){
   		var server = serverSockets[i];
   		server.emit("orientation", msg);
   	}
-    fs.writeFile("position.txt", "1," + msg.x + "," + msg.y + "," + msg.touch + "\n", (err) => { 
+    fs.writeFile("position.txt", "1," + msg.x + "," + msg.y + "," + (+msg.touch) + "\n", (err) => { 
       if (err) { throw err; } 
       //console.log("wrote");
     });
