@@ -182,8 +182,8 @@ function handleOrientation(event) {
 
   // 10 is half the size of the ball
   // It center the positioning point to the center of the ball
-  ball.style.top  = (maxX*xy.x) + "px";
-  ball.style.left = (maxY*xy.y) + "px";
+  ball.style.top  = (maxX*xy.y) + "px";
+  ball.style.left = (maxY*xy.x) + "px";
   var hasTouch = false;
   for(var i in ongoingTouches) {
   	if (ongoingTouches.hasOwnProperty(i) && ongoingTouches[i] !== undefined) {
