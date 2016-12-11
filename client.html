@@ -46,6 +46,10 @@
     height: 200px;
     background-color: blue;
   }
+
+  body {
+    overflow: hidden;
+  }
 	</style>
 	<script src="/socket.io/socket.io.js"></script>
 </head>
@@ -212,6 +216,8 @@ var first = true;
 var fovX = 60;
 var fovY = 45;
 
+var orientationHolder = (screen.orientation === undefined) ? window : screen;
+
 function clamp01(val) { if (val < 0) return 0; if (val > 1) return 1; return val; }
 
 function fixAngle(angle) {
@@ -220,7 +226,7 @@ function fixAngle(angle) {
   return angle;
 }
 function orientationToCursor(event, center) {
-  return {x: clamp01((fixAngle(event.alpha - center.alpha)/(-fovX)) + 0.5),
+  return {x: clamp01((fixAngle(event.alpha - center.alpha - orientationHolder.orientation)/(-fovX)) + 0.5),
           y: clamp01((event.beta - center.beta) / (-fovY) + 0.5)};
 }
 
@@ -228,7 +234,6 @@ function orientationToCursor(event, center) {
 //document.querySelector(".draw-button").addEventListener("mouseup", handleUp, false);
 
 console.log("initialized touch callbacks");
-
 function handleOrientation(event) {
   var touchState = hasTouch(resetTouches) ? 2 : (hasTouch(drawTouches) ? 1 : 0);
   if (touchState == 2 || first) {
@@ -255,7 +260,8 @@ function handleOrientation(event) {
       /*"beta" : event.beta, 
       "gamma" : event.gamma, 
       "alpha": event.alpha, */
-      "touch": touchState});
+      "touch": touchState
+    });
 }
 var socket = io();
 window.addEventListener("deviceorientation", handleOrientation, true);
@@ -263,6 +269,28 @@ window.addEventListener("deviceorientation", handleOrientation, true);
 document.addEventListener('gesturestart', function (e) {
     e.preventDefault();
 });
+
+var devWidth, devHeight;
+  window.addEventListener('load', function() {
+    devWidth  = screen.width;
+    devHeight = screen.height;
+  });
+window.addEventListener('orientationchange', function () {
+    if (devWidth < 768 && (window.orientation === 90 || window.orientation === -90)) {
+      var angle = -window.orientation;
+      document.body.style.width = devWidth + 'px';
+      document.body.style.height = devHeight + 'px';
+      document.body.style.transform = 'rotate(' + angle + 'deg)';
+      //super-lame blindfold "fix"
+      if (angle < 0) {
+        document.body.style.transformOrigin = ''+ devWidth/2 +'px '+devWidth/2+'px';
+      } else {
+        document.body.style.transformOrigin = ''+ devHeight/2 +'px '+devHeight/2+'px';
+      }
+    } else {
+      document.body.removeAttribute('style');
+    }
+  }, true);
 	</script>
 
 	</body>
