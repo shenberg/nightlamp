@@ -45,7 +45,7 @@ io.on('connection', function(socket){
 	}
   });
   socket.on("orientation", function(msg) {
-  	console.log(msg.user_id + ": (" + msg.x + "," + msg.y + "," + msg.touch + ")");
+  	//console.log(msg.user_id + ": (" + msg.x + "," + msg.y + "," + msg.touch + ")");
   	for(var i = 0; i < serverSockets.length; i++) {
   		var server = serverSockets[i];
   		server.emit("orientation", msg);
