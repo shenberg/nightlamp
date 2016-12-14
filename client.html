@@ -216,7 +216,9 @@ var first = true;
 var fovX = 60;
 var fovY = 45;
 
-var orientationHolder = (screen.orientation === undefined) ? window : screen;
+// TODO: adapt screen.orientation better
+//var orientationHolder = (screen.orientation === undefined) ? window : screen;
+var orientationHolder = window;
 
 function clamp01(val) { if (val < 0) return 0; if (val > 1) return 1; return val; }
 
@@ -280,8 +282,8 @@ window.addEventListener('orientationchange', function () {
       var angle = -window.orientation;
       document.body.style.width = devWidth + 'px';
       document.body.style.height = devHeight + 'px';
-      document.body.style.transform = 'rotate(' + angle + 'deg)';
       //super-lame blindfold "fix"
+      document.body.style.transform = 'rotate(' + angle + 'deg)';
       if (angle < 0) {
         document.body.style.transformOrigin = ''+ devWidth/2 +'px '+devWidth/2+'px';
       } else {
