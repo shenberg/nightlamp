@@ -45,7 +45,7 @@ function batchSend() {
         server.emit("orientation", {x:msg[0],y:msg[1],touch:msg[2]});
       }
       
-      totalMsg.push(msg.user_id + "," + msg[0] + "," + msg[1] + "," + msg[2]);
+      totalMsg.push(userId + "," + msg[0] + "," + msg[1] + "," + msg[2]);
     }
   }
   if (matlabSocket && (totalMsg.length > 0)) {
