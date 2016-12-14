@@ -251,8 +251,8 @@ function handleOrientation(event) {
 
   // 10 is half the size of the ball
   // It center the positioning point to the center of the ball
-  ball.style.top  = (maxX*xy.y) + "px";
-  ball.style.left = (maxY*xy.x) + "px";
+  ball.style.top  = (maxX*xy.y - 20) + "px";
+  ball.style.left = (maxY*xy.x - 20) + "px";
 
   socket.emit("orientation", 
     {
