@@ -32,34 +32,63 @@ wss.on('connection', function connection(ws) {
   });
 });
 
+var usersConnected=0;
+var msgs = {}
+
+function batchSend() {
+  var totalMsg = [];
+  for(var userId in msgs) {
+    if (msgs.hasOwnProperty(userId)) {
+      var msg = msgs[userId];
+      for(var i = 0; i < serverSockets.length; i++) {
+        var server = serverSockets[i];
+        server.emit("orientation", {x:msg[0],y:msg[1],touch:msg[2]});
+      }
+      
+      totalMsg.push(msg.user_id + "," + msg[0] + "," + msg[1] + "," + msg[2]);
+    }
+  }
+  if (matlabSocket && (totalMsg.length > 0)) {
+    matlabSocket.send(totalMsg.join("\n"));
+  }
+  if (usersConnected > 0) {
+    setTimeout(batchSend, 33);
+  }
+}
 
 io.on('connection', function(socket){
   console.log('a user connected');
+  usersConnected += 1;
+  if (usersConnected == 1) {
+    setTimeout(batchSend, 33);
+  }
+
   socket.on('disconnect', function(){
   	if (!socket.isServer) {
+      usersConnected -= 1;
 	    console.log('user disconnected');
-	} else {
-		// socket is server socket
-		serverSockets.splice(serverSockets.indexOf(socket), 1);
-		console.log("server disconnected");
-	}
+  	} else {
+  		// socket is server socket
+  		serverSockets.splice(serverSockets.indexOf(socket), 1);
+  		console.log("server disconnected");
+  	}
   });
   socket.on("orientation", function(msg) {
   	//console.log(msg.user_id + ": (" + msg.x + "," + msg.y + "," + msg.touch + ")");
+    // 
+    /*
   	for(var i = 0; i < serverSockets.length; i++) {
   		var server = serverSockets[i];
   		server.emit("orientation", msg);
   	}
     
-    /*fs.writeFile("position.txt", "1," + msg.x + "," + msg.y + "," + (+msg.touch), (err) => { 
-      if (err) { throw err; } 
-      //console.log("wrote");
-    });*/
     if (matlabSocket) {
       matlabSocket.send(msg.user_id + "," + msg.x + "," + msg.y + "," + (+msg.touch));
-    }
+    }*/
+    msgs[msg.user_id] = [msg.x, msg.y, msg.touch];
   });
   socket.on("server-started", function(msg) {
+    usersConnected -= 1;
   	console.log("user is server!");
   	serverSockets.push(socket);
   	socket.isServer = true;
