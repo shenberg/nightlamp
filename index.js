@@ -6,6 +6,22 @@ var fs = require('fs');
 var WebSocketServer = require('ws').Server;
 var wss = WebSocketServer({port: 3001});
 
+var isWin = /^win/.test(process.platform);
+var matlabPipe = undefined;
+if (isWin) {
+  var net = require('net');
+  var pipePath = '\\\\.\\pipe\\nightpipe';
+  var pipeServer = net.createServer(function(stream) {
+    console.log('pipe listener connected');
+    matlabPipe = stream;
+    stream.on('end', function() {
+      console.log('pipe listener disconnected');
+      matlabPipe = undefined;
+    });
+  });
+  pipeServer.listen(pipePath);
+}
+
 app.get('/', function(req, res){
   res.sendFile('client.html', {root : __dirname});
 });
@@ -48,8 +64,13 @@ function batchSend() {
       totalMsg.push(userId + "," + msg[0] + "," + msg[1] + "," + msg[2]);
     }
   }
-  if (matlabSocket && (totalMsg.length > 0)) {
-    matlabSocket.send(totalMsg.join("\n"));
+  if (totalMsg.length > 0) {
+    if (matlabSocket) {
+      matlabSocket.send(totalMsg.join("\n"));
+    }
+    if (matlabPipe) {
+      matlabPipe.write(totalMsg.join("\n"));
+    }
   }
   if (usersConnected > 0) {
     setTimeout(batchSend, 33);
