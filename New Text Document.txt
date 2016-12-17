@@ -1,0 +1,7 @@
+open js node cmd
+run npm install
+type cd C:\Users\hpp\Desktop\luminous\nightlamp
+run node index.js
+optional: open localhost:3000 on browser
+detect server ip address using ipconfig
+connect smartphone browser to that address

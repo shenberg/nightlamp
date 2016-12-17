@@ -19,7 +19,8 @@ if (isWin) {
       matlabPipe = undefined;
     });
   });
-  pipeServer.listen(pipePath);
+  //pipeServer.listen(pipePath);
+  pipeServer.listen(5000);
 }
 
 app.get('/', function(req, res){
@@ -81,7 +82,7 @@ io.on('connection', function(socket){
   console.log('a user connected');
   usersConnected += 1;
   if (usersConnected == 1) {
-    setTimeout(batchSend, 33);
+    setTimeout(batchSend, 330);
   }
 
   socket.on('disconnect', function(){

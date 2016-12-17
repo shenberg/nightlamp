@@ -1,0 +1,24 @@
+function draw_users( h_fig , variables_from_server )
+global history_pos_mtx
+
+% a = clock;
+% if ( mod(a(6),1/30) < 0.1 )
+    history_pos_mtx = snake( history_pos_mtx , variables_from_server([2,3]).' );
+    
+    h_plot = get(1,'Children');
+    curr_user_line = get( h_plot , 'Children' );
+    
+    x_orig = history_pos_mtx(:,1);
+    y_orig = history_pos_mtx(:,2);
+    N_orig = length(x_orig);
+    
+    x_intrp = interp1( 1:N_orig , x_orig ,linspace(1,N_orig,20) );
+    yy = spline(x_orig,y_orig,xinterp)
+    
+    y_intrp = interp1( 1:) , history_pos_mtx(:,2),...
+        linspace(1,length(history_pos_mtx(:,2)),20 ) );
+    
+    set(curr_user_line ,'XData', x_intrp , 'YData', y_intrp );
+    
+    drawnow
+% end

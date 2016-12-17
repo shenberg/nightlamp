@@ -39,7 +39,7 @@ classdef matWebSocketClient < handle
             % Sends the message to the server
             try
                 obj.client.send(message);
-                pause(0.005); % Small pause for the java method
+                pause(0.005); % Small pause for the java method 0.005
                 %fprintf('%s\n', ['Message sent: ' message]);
                 obj.localLogAppend(message,'sent');
             catch err;
