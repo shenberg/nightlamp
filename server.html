@@ -101,61 +101,115 @@ function createBall(userId) {
 	return ball;
 }
 
-function createUser(userId) {
-	var first = true;
-	var newInfo = false;
-	var pts = [];
+function createRandomWalker(startX, startY) {
+	var pts = [{x: startX, y: startY}];
+	var lastX = startX,
+		lastY = startY,
+		newInfo = false;
 
-	var lastX = 0,
-		lastY = 0;
+	var MAX_UPDATES = 150;
+	var framesSinceUpdate = 0;
 
-	var ball = createBall(userId);
-
-	function handleOrientation(event) {
-	  if (first) {
-	  	lastX = event[0];
-	  	lastY = event[1];
-	  	// TODO: hack
-	  	pts[0] = {x:event[0]*width, y:event[1]*height};
-	  	first = false;
-	  	return;
-	  }
-
-	  lastX = event[0];
-	  lastY = event[1];
-
-	  // 10 is half the size of the ball
-	  // It center the positioning point to the center of the ball
-	  ball.style.top  = (maxX*event[1]) + "px";
-	  ball.style.left = (maxY*event[0]) + "px";
-	  newInfo = true;
+	function addPoint(x, y) {
+		pushNewPoints(pts, {"x" : x, "y" : y});
+		newInfo = true;
+		framesSinceUpdate = 0;
 	}
 
-	function update() {
+	function draw() {
 		if (newInfo) {
-			var newPt = {x:lastX*width, y:lastY*height};
 			ctx.strokeStyle = "blue";
 			ctx.beginPath(); //collect data xy to draw
-			ctx.moveTo(pts[pts.length-1].x, pts[pts.length-1].y);
-			ctx.lineTo(newPt.x, newPt.y);
+			ctx.moveTo(lastX, lastY);
+			ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
 			ctx.stroke(); //DRAW IT!
-			pushNewPoints(pts, newPt);
+			lastX = pts[pts.length - 1].x;
+			lastY = pts[pts.length - 1].y;
 
 			newInfo = false;
 		}
 		ctx.strokeStyle = "#050505";
 		randomWalk(pts);
 		drawCurve(ctx, pts);
+		framesSinceUpdate++;
 	}
 
-	function clear() {
+	function alive() {
+		return framesSinceUpdate < MAX_UPDATES;
+	}
+	return {
+		"addPoint" : addPoint,
+		"draw" : draw,
+		"alive" : alive
+	};
+}
+
+function createUser(userId) {
+	var first = true;
+
+	var lastX = 0,
+		lastY = 0;
+
+	var touchState = 0; // if state == 1 then draw
+
+	var ball = createBall(userId);
+
+	var strokes = [];
+	var currentStroke = null;
+	// TODO: remove
+	var pts = [];
+
+	function handleOrientation(event) {
+	  lastX = event[0] * width;
+	  lastY = event[1] * height;
+	  if (first) {
+	  	first = false;
+	  	return;
+	  }
+
+	  var newTouchState = event[2];
+	  if (newTouchState != touchState) {
+	  	touchState = newTouchState;
+	  	if (touchState == 1) {
+	  		//console.log("starting stroke!");
+	  		var newStroke = createRandomWalker(lastX, lastY);
+	  		strokes.push(newStroke);
+	  		currentStroke = newStroke;
+	  	} else {
+	  		// TODO: notify stroke?
+	  		currentStroke = null;
+	  	}
+	  } else if (touchState == 1) {
+	  	// if drawing already
+	  	currentStroke.addPoint(lastX, lastY);
+	  }
+
+
+	  // 10 is half the size of the ball
+	  // It center the positioning point to the center of the ball
+	  ball.style.top  = (maxX*event[1]) + "px";
+	  ball.style.left = (maxY*event[0]) + "px";
+	}
+
+	function draw() {
+		for (var i = 0; i < strokes.length; i++) {
+			strokes[i].draw();
+		}
+		// remove dead strokes
+		while ((strokes.length > 0) && (!strokes[0].alive())) {
+			//console.log("clearing stroke");
+			strokes.shift();
+		}
+	}
+
+	function remove() {
 		ball.parentNode.removeChild(ball);
 	}
 
 	return {
-		"update": update,
+		"draw": draw,
 		"handleOrientation": handleOrientation,
-		"clear": clear
+		"remove": remove
 	};
 }
 
@@ -183,7 +237,7 @@ function receivedOrientations(orientations) {
 	for(userId in users) {
 		if (users.hasOwnProperty(userId) && (users[userId] !== undefined)) {
 			console.log('disconnected user: ' + userId);
-			users[userId].clear();
+			users[userId].remove();
 		}
 	}
 
@@ -226,7 +280,7 @@ function randomWalk(ptsList) {
 function updateDisplay() {
 	for (var userId in users) {
 		if (users.hasOwnProperty(userId)) {
-			users[userId].update();
+			users[userId].draw();
 		}
 	}
 	window.requestAnimationFrame(updateDisplay);
