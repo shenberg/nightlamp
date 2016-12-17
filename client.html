@@ -60,9 +60,6 @@
     position: relative;
 }
 
-
-
-   
   .draw-button {
     margin: 10% auto;
 
@@ -73,7 +70,6 @@
     border-radius: 60%;
     /*margin: auto;*/
   }
-
 
   body {
     overflow: hidden;
@@ -242,7 +238,7 @@ var lastOrientation = {x: 0, y:0};
 var rawCenter = {alpha: 0, beta: 0};
 var first = true;
 
-var fovX = 60; // in degrees
+var fovX = 80; // in degrees
 var fovY = 45; // in degrees
 
 // TODO: adapt screen.orientation better
@@ -263,13 +259,19 @@ function orientationToCursor(event, center) {
 
 //document.querySelector(".draw-button").addEventListener("mousedown", handleDown, false);
 //document.querySelector(".draw-button").addEventListener("mouseup", handleUp, false);
-
+var lastXY;
+var ALPHA = 0.5;
+function filter(xy, lastOut, alpha) {
+  return {x: xy.x*alpha + (1-alpha)*lastOut.x,
+          y: xy.y*alpha + (1-alpha)*lastOut.y}
+}
 console.log("initialized touch callbacks");
 function handleOrientation(event) {
   var touchState = hasTouch(resetTouches) ? 2 : (hasTouch(drawTouches) ? 1 : 0);
   if (touchState == 2 || first) {
     rawCenter.alpha = event.alpha;
     rawCenter.beta = event.beta;
+    lastXY = undefined;
     first = false;
   }
 
@@ -277,7 +279,12 @@ function handleOrientation(event) {
   output.innerHTML += "beta: " + event.beta + "\n";
 
   var xy = orientationToCursor(event, rawCenter);
-
+  // filtering: comment-in to enable again
+  /*
+  if (lastXY) {
+    xy = filter(xy, lastXY, ALPHA);
+  }
+  lastXY = xy;*/
   // 10 is half the size of the ball
   // It center the positioning point to the center of the ball
   ball.style.top  = (maxX*xy.y ) + "px";
