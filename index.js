@@ -35,6 +35,11 @@ app.get('/server2', function(req, res){
   res.sendFile('raw_ws_server.html', {root : __dirname});
 });
 
+app.get('/buttonimg.jpg', function(req, res){
+  res.sendFile('bttn_cntr.png',
+   {root : __dirname+"/imgs"});
+});
+
 var serverSockets = [];
 
 var matlabSocket = undefined;
@@ -71,8 +76,6 @@ function batchSend() {
     //server.emit("orientation", {x:msg[0],y:msg[1],touch:msg[2]});
     server.emit("orientations", msgs);
   }
-
-
 
   if (totalMsg.length > 0) {
     if (matlabSocket) {
