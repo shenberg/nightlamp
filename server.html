@@ -34,8 +34,8 @@
 	<body>
 		blah this is html
 		<div class="garden">
-			<div class="ball">
-			</div>
+			<!-- <div class="ball"> 
+			</div> -->
 			<canvas id="surface" width="800" height="800">
 			</canvas>
 		</div>
@@ -47,8 +47,9 @@ var ball   = document.querySelector('.ball'); //fetching the elements (in the cl
 var garden = document.querySelector('.garden');
 var output = document.querySelector('.output');
 
-var maxX = garden.clientWidth  - ball.clientWidth;
-var maxY = garden.clientHeight - ball.clientHeight;
+// TODO: un-hard-code the 20 (pixels) constant here;
+var maxX = garden.clientWidth  - 20;
+var maxY = garden.clientHeight - 20;
 
 var fovX = 60;
 var fovY = 45;
@@ -73,12 +74,7 @@ ctx.globalCompositeOperation = 'lighter';
 var width = canvas.width;
 var height = canvas.height;
 
-var lastX = 0,
-	lastY = 0;
-
-var first = true;
-var newInfo = false;
-var pts = [];
+var users = {};
 
 function drawCurve(ctx, pts) {
 	if (pts.length < 3) return;
@@ -96,29 +92,108 @@ function drawCurve(ctx, pts) {
 	ctx.stroke();
 }
 
-function handleOrientation(event) {
-  if (first) {
-  	lastX = event.x;
-  	lastY = event.y;
-  	// TODO: hack
-  	pts[0] = {x:event.x*width, y:event.y*height};
-	window.requestAnimationFrame(updateDisplay);
-  	first = false;
-  	return;
-  }
 
-  lastX = event.x;
-  lastY = event.y;
-
-  // 10 is half the size of the ball
-  // It center the positioning point to the center of the ball
-  ball.style.top  = (maxX*event.y) + "px";
-  ball.style.left = (maxY*event.x) + "px";
-  newInfo = true;
+function createBall(userId) {
+	// TODO:
+	var ball = document.createElement("div");
+	ball.className = "ball";
+	document.querySelector(".garden").appendChild(ball);
+	return ball;
 }
+
+function createUser(userId) {
+	var first = true;
+	var newInfo = false;
+	var pts = [];
+
+	var lastX = 0,
+		lastY = 0;
+
+	var ball = createBall(userId);
+
+	function handleOrientation(event) {
+	  if (first) {
+	  	lastX = event[0];
+	  	lastY = event[1];
+	  	// TODO: hack
+	  	pts[0] = {x:event[0]*width, y:event[1]*height};
+	  	first = false;
+	  	return;
+	  }
+
+	  lastX = event[0];
+	  lastY = event[1];
+
+	  // 10 is half the size of the ball
+	  // It center the positioning point to the center of the ball
+	  ball.style.top  = (maxX*event[1]) + "px";
+	  ball.style.left = (maxY*event[0]) + "px";
+	  newInfo = true;
+	}
+
+	function update() {
+		if (newInfo) {
+			var newPt = {x:lastX*width, y:lastY*height};
+			ctx.strokeStyle = "blue";
+			ctx.beginPath(); //collect data xy to draw
+			ctx.moveTo(pts[pts.length-1].x, pts[pts.length-1].y);
+			ctx.lineTo(newPt.x, newPt.y);
+			ctx.stroke(); //DRAW IT!
+			pushNewPoints(pts, newPt);
+
+			newInfo = false;
+		}
+		ctx.strokeStyle = "#050505";
+		randomWalk(pts);
+		drawCurve(ctx, pts);
+	}
+
+	function clear() {
+		ball.parentNode.removeChild(ball);
+	}
+
+	return {
+		"update": update,
+		"handleOrientation": handleOrientation,
+		"clear": clear
+	};
+}
+
+var ors = {};
+function receivedOrientations(orientations) {
+	var usersAfterUpdate = {};
+	// for every user we got an orientation from the server:
+	// 
+	ors = orientations;
+	for(userId in orientations) {
+		if (orientations.hasOwnProperty(userId)) {
+			var user = users[userId];
+			if (user === undefined) {
+				console.log('new user detected: ' + userId);
+				user = createUser(userId);
+				console.log(user);
+			}
+			user.handleOrientation(orientations[userId]);
+			usersAfterUpdate[userId] = user;
+			// remove user from old users list, so we can check for disconnected users
+			delete users[userId];
+		}
+	}
+	// check if there are users left in old user list, if so delete them
+	for(userId in users) {
+		if (users.hasOwnProperty(userId) && (users[userId] !== undefined)) {
+			console.log('disconnected user: ' + userId);
+			users[userId].clear();
+		}
+	}
+
+	users = usersAfterUpdate;
+}
+
 var socket = io();
 socket.emit("server-started");
-socket.on("orientation", handleOrientation); //getting the info from the accelerometer
+//socket.on("orientation", handleOrientation); //getting the info from the accelerometer
+socket.on("orientations", receivedOrientations);
 
 function pushNewPoints(ptsList, newDest) {
 	var lastPt = ptsList[ptsList.length - 1];
@@ -149,23 +224,15 @@ function randomWalk(ptsList) {
 }
 
 function updateDisplay() {
-	if (newInfo) {
-		var newPt = {x:lastX*width, y:lastY*height};
-		ctx.strokeStyle = "blue";
-		ctx.beginPath(); //collect data xy to draw
-		ctx.moveTo(pts[pts.length-1].x, pts[pts.length-1].y);
-		ctx.lineTo(newPt.x, newPt.y);
-		ctx.stroke(); //DRAW IT!
-		pushNewPoints(pts, newPt);
-
-		newInfo = false;
+	for (var userId in users) {
+		if (users.hasOwnProperty(userId)) {
+			users[userId].update();
+		}
 	}
-	ctx.strokeStyle = "#050505";
-	randomWalk(pts);
-	drawCurve(ctx, pts);
 	window.requestAnimationFrame(updateDisplay);
 }
 
+window.requestAnimationFrame(updateDisplay);
 
 	</script>
 

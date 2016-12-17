@@ -54,6 +54,7 @@ var msgs = {}
 
 function batchSend() {
   var totalMsg = [];
+  /*
   for(var userId in msgs) {
     if (msgs.hasOwnProperty(userId)) {
       var msg = msgs[userId];
@@ -64,7 +65,15 @@ function batchSend() {
       
       totalMsg.push(userId + "," + msg[0] + "," + msg[1] + "," + msg[2]);
     }
+  }*/
+  for(var i = 0; i < serverSockets.length; i++) {
+    var server = serverSockets[i];
+    //server.emit("orientation", {x:msg[0],y:msg[1],touch:msg[2]});
+    server.emit("orientations", msgs);
   }
+
+
+
   if (totalMsg.length > 0) {
     if (matlabSocket) {
       matlabSocket.send(totalMsg.join("\n"));
@@ -89,6 +98,10 @@ io.on('connection', function(socket){
   	if (!socket.isServer) {
       usersConnected -= 1;
 	    console.log('user disconnected');
+      var uid = socket.userId;
+      if (uid !== undefined) {
+        delete msgs[uid];
+      }
   	} else {
   		// socket is server socket
   		serverSockets.splice(serverSockets.indexOf(socket), 1);
@@ -107,6 +120,7 @@ io.on('connection', function(socket){
     if (matlabSocket) {
       matlabSocket.send(msg.user_id + "," + msg.x + "," + msg.y + "," + (+msg.touch));
     }*/
+    socket.userId = msg.user_id;
     msgs[msg.user_id] = [msg.x, msg.y, msg.touch];
   });
   socket.on("server-started", function(msg) {
