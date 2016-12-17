@@ -5,8 +5,9 @@
 
 	<style>
 	.garden {
-	  position: relative;
-	  border: 5px solid #CCC;
+
+    position: relative;
+    border: 5px solid #CCC;
 /*	  border-radius: 10px;*/
     border-radius: 140px;
 	}
@@ -35,28 +36,29 @@
   text-align: center;
   }
 
-  .draw-button {
-    margin: auto;
-    width: 60%;
-    height: 200px;
-    background-color: red;
-        top: 10%; 
-          margin: auto;
-  }
-
 .reset-button {
-    margin: 30% 10% 10%;
+    margin: 10% auto;
   
-    bottom: 150%;
+    bottom: 10%;
     width: 40%;
     height: 140px;
-    text-shadow: 0 1px #0d4d09;
+    /*text-shadow: 0 1px #0d4d09;*/
     background-color: #404040;
-    border-color: #FFFFFF;
-    display: inline-block;
+
+    border-style: solid;
+    border-color: white;
+    border-width: 15px;
+    
+    /*display: inline-block;*/
     vertical-align: top;
-    overflow: hidden;
-    border-radius: 50%;
+    /*overflow: hidden;*/
+    border-radius: 90%;
+    position: relative;
+}
+
+.inner-button {
+  position:
+}
 
     /*background-clip: padding-box;*/
     /*-webkit-box-shadow: inset 0 1px rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.2);
@@ -67,8 +69,17 @@
     background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.12) 51%, rgba(0, 0, 0, 0.04));
       margin: auto;*/
 
-}
 
+  .draw-button {
+    margin: 10% auto;
+
+    width: 60%;
+    height: 200px;
+    background-color: red;
+    top: 90%; 
+    border-radius: 60%;
+    /*margin: auto;*/
+  }
 
 
   body {
@@ -81,11 +92,11 @@
 	<body class="noselect">
 		
     <div class="center">
-  		<div class="draw-button garden">
-  			<div class="ball">
-  			</div>
-  		</div>
-      <div class="reset-button">
+      <div class="reset-button">        
+      </div>
+      <div class="draw-button garden">
+        <div class="ball">
+        </div>
       </div>
     </div>
 		<pre class="output"></pre>
