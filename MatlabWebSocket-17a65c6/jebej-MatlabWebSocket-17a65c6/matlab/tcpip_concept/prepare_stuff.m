@@ -1,7 +1,7 @@
 clear all; close all; clc
 
 N_users = 1; % number of users connected
-N_history = 40; % length of line for each user
+N_history = 10; % length of line for each user
 
 % users_vect = rand(N_users,1);
 global history_pos_mtx
@@ -22,12 +22,12 @@ axis equal
 xlim([0,1]);
 ylim([0,1]);
 
-t = tcpclient('192.168.1.65',5000)
+t = tcpclient('192.168.1.18',5000)
 % set(t,'timeout',1);
 
 while(1)
     a = read(t,150,'uint8');
-    indices = strfind(a,'03303961611');
+    indices = strfind(a,'01549744012');
 %     char(a)
 %     char( a( indices(1):indices(2) ) )
     A = sscanf( char(a( indices(1):indices(2) )) , '%d,%f,%f,%d');   

@@ -43,7 +43,7 @@
 
 	<script>
 
-var ball   = document.querySelector('.ball');
+var ball   = document.querySelector('.ball'); //fetching the elements (in the classes) from above
 var garden = document.querySelector('.garden');
 var output = document.querySelector('.output');
 
@@ -118,7 +118,7 @@ function handleOrientation(event) {
 }
 var socket = io();
 socket.emit("server-started");
-socket.on("orientation", handleOrientation);
+socket.on("orientation", handleOrientation); //getting the info from the accelerometer
 
 function pushNewPoints(ptsList, newDest) {
 	var lastPt = ptsList[ptsList.length - 1];
@@ -143,8 +143,8 @@ function pushNewPoints(ptsList, newDest) {
 
 function randomWalk(ptsList) {
 	for(var i = 0; i < ptsList.length; i++) {
-		ptsList[i].x += 3*(Math.random() - 0.5);
-		ptsList[i].y += 3*(Math.random() - 0.5);
+		ptsList[i].x += 1.5*(Math.random() - 0.5);
+		ptsList[i].y += 1.5*(Math.random() - 0.5);
 	}
 }
 
@@ -152,15 +152,15 @@ function updateDisplay() {
 	if (newInfo) {
 		var newPt = {x:lastX*width, y:lastY*height};
 		ctx.strokeStyle = "blue";
-		ctx.beginPath();
+		ctx.beginPath(); //collect data xy to draw
 		ctx.moveTo(pts[pts.length-1].x, pts[pts.length-1].y);
 		ctx.lineTo(newPt.x, newPt.y);
-		ctx.stroke();
+		ctx.stroke(); //DRAW IT!
 		pushNewPoints(pts, newPt);
 
 		newInfo = false;
 	}
-	ctx.strokeStyle = "#000500";
+	ctx.strokeStyle = "#050505";
 	randomWalk(pts);
 	drawCurve(ctx, pts);
 	window.requestAnimationFrame(updateDisplay);

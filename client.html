@@ -7,7 +7,8 @@
 	.garden {
 	  position: relative;
 	  border: 5px solid #CCC;
-	  border-radius: 10px;
+/*	  border-radius: 10px;*/
+    border-radius: 140px;
 	}
 
 	.ball {
@@ -31,24 +32,48 @@
 }
 
   .center {
-
+  text-align: center;
   }
+
   .draw-button {
-    margin: auto;
-    width: 80%;
-    height: 300px;
-    background-color: red;
-  }
-
-  .reset-button {
     margin: auto;
     width: 60%;
     height: 200px;
-    background-color: blue;
+    background-color: red;
+        top: 10%; 
+          margin: auto;
   }
+
+.reset-button {
+    margin: 30% 10% 10%;
+  
+    bottom: 150%;
+    width: 40%;
+    height: 140px;
+    text-shadow: 0 1px #0d4d09;
+    background-color: #404040;
+    border-color: #FFFFFF;
+    display: inline-block;
+    vertical-align: top;
+    overflow: hidden;
+    border-radius: 50%;
+
+    /*background-clip: padding-box;*/
+    /*-webkit-box-shadow: inset 0 1px rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.2);*/
+   /* background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.12) 51%, rgba(0, 0, 0, 0.04));
+    background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.12) 51%, rgba(0, 0, 0, 0.04));
+    background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.12) 51%, rgba(0, 0, 0, 0.04));
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.12) 51%, rgba(0, 0, 0, 0.04));
+      margin: auto;*/
+
+}
+
+
 
   body {
     overflow: hidden;
+    background: black;
   }
 	</style>
 	<script src="/socket.io/socket.io.js"></script>
@@ -210,11 +235,11 @@ function handleUp(evt) {
 }
 
 var lastOrientation = {x: 0, y:0};
-var rawCenter = {alpha: 0, gamma: 0};
+var rawCenter = {alpha: 0, beta: 0};
 var first = true;
 
-var fovX = 60;
-var fovY = 45;
+var fovX = 60; // in degrees
+var fovY = 45; // in degrees
 
 // TODO: adapt screen.orientation better
 //var orientationHolder = (screen.orientation === undefined) ? window : screen;
@@ -251,8 +276,8 @@ function handleOrientation(event) {
 
   // 10 is half the size of the ball
   // It center the positioning point to the center of the ball
-  ball.style.top  = (maxX*xy.y - 20) + "px";
-  ball.style.left = (maxY*xy.x - 20) + "px";
+  ball.style.top  = (maxX*xy.y ) + "px";
+  ball.style.left = (maxY*xy.x ) + "px";
 
   socket.emit("orientation", 
     {
@@ -265,7 +290,7 @@ function handleOrientation(event) {
       "touch": touchState
     });
 }
-var socket = io();
+var socket = io(); //send/recieve msgs
 window.addEventListener("deviceorientation", handleOrientation, true);
 // disable zoom on iOS Safari 10+
 document.addEventListener('gesturestart', function (e) {
