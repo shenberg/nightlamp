@@ -4,8 +4,8 @@
 	<style>
 	.garden {
 	  position: relative;
-	  width : 800px;
-	  height: 800px;
+	  width : 1800px;
+	  height: 950px;
 	  border: 5px solid #CCC;
 	  border-radius: 10px;
 	}
@@ -36,7 +36,7 @@
 		<div class="garden">
 			<!-- <div class="ball"> 
 			</div> -->
-			<canvas id="surface" width="800" height="800">
+			<canvas id="surface" width="1800" height="950">
 			</canvas>
 		</div>
 		<pre class="output"></pre>
@@ -187,8 +187,8 @@ function createUser(userId) {
 
 	  // 10 is half the size of the ball
 	  // It center the positioning point to the center of the ball
-	  ball.style.top  = (maxX*event[1]) + "px";
-	  ball.style.left = (maxY*event[0]) + "px";
+	  ball.style.top  = (maxY*event[1]) + "px";
+	  ball.style.left = (maxX*event[0]) + "px";
 	}
 
 	function draw() {
