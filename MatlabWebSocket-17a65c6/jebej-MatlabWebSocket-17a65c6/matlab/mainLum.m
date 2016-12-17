@@ -1,19 +1,19 @@
-function mainLum % starts Luminous!
+     function mainLum % starts Luminous!
 
-clear all; close all;  clc;
-'shuffle'; rng('shuffle');
-
-[wPtr, screenSize]= openScreen
+clear all ; close all;  clc;
+'shuffle';  rng('shuffle'); 
+ 
+[wPtr,  screenSize]= openScreen
 URI= 'ws://localhost:3001';
 
-message='Welcome to Luminous!';
+message='Welcome to Luminous!'; 
 drawMessage(message, wPtr, screenSize); %leaves the msg on until a key is pressed
-  
+    
 n = nightClient(URI,wPtr,screenSize); %recieves phone locations from java
 
 end
 
-function [wPtr screenSize]=openScreen %PsychToolBox always starts with this
+function [wPtr, screenSize]=openScreen %PsychToolBox always starts with this
 
 Screen('Preference', 'Verbosity', 1);   %supress warnings to console
 Screen('Preference', 'VisualDebugLevel', 1);    %suppress check screen
