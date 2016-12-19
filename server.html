@@ -69,8 +69,6 @@ function orientationToCursor(event) {
 var canvas = document.querySelector("#surface");
 var ctx = canvas.getContext('2d');
 ctx.strokeStyle = "blue";
-// TODO: somewhere more appropriate?
-ctx.globalCompositeOperation = 'lighter';
 var width = canvas.width;
 var height = canvas.height;
 
@@ -279,12 +277,65 @@ function randomWalk(ptsList) {
 	}
 }
 
+
+function createEraser(secondsPerCycle) {
+	var startTime = +new Date,
+		lastTime = startTime;
+	// 
+	function timeToAngle(t) {
+		return (((t - startTime)/1000) % secondsPerCycle / secondsPerCycle) * Math.PI * 2;
+	}
+	function draw() {
+		var currentTime = +new Date,
+			lastAngle = timeToAngle(lastTime),
+			currentAngle = timeToAngle(currentTime);
+		lastTime = currentTime;
+
+		// clear swept volume since last call
+		// TODO: hack - if deletion line width is equal to line width when drawing clock hand,
+		// we get some left-over pixels due to antialiasing. they leave cool moire patterns, but still
+		ctx.lineWidth = 12; 
+		ctx.strokeStyle = 'black';
+		ctx.fillStyle = 'black';
+		ctx.beginPath();
+		ctx.moveTo(width / 2, height / 2);
+		var dxOld = Math.cos(lastAngle),
+			dyOld = Math.sin(lastAngle),
+			dx = Math.cos(currentAngle),
+			dy = Math.sin(currentAngle);
+		// TODO: assuming time between calls is enough for less than 1/4th of a cycle
+		// TODO: assuming width > height - counting on canvas to do clipping
+		ctx.lineTo((width / 2) + dxOld*width, (height / 2) + dyOld*width);
+		ctx.lineTo((width / 2) + dx*width, (height / 2) + dy*width);
+		ctx.closePath();
+		ctx.fill();
+		ctx.stroke();
+		// draw the hand of the clock
+		ctx.lineWidth = 10; // TODO: un-hardcode
+		ctx.strokeStyle = "white";
+		ctx.beginPath();
+		ctx.moveTo(width / 2, height / 2);
+		ctx.lineTo((width / 2) + dx*width, (height / 2) + dy*width);
+		ctx.stroke();
+	}
+	return {"draw": draw};
+}
+
+var eraser = createEraser(10);
+
 function updateDisplay() {
+	// draw all strokes
+	ctx.globalCompositeOperation = 'lighter';
+	ctx.lineWidth = 1;
 	for (var userId in users) {
 		if (users.hasOwnProperty(userId)) {
 			users[userId].draw();
 		}
 	}
+	// draw image 
+	ctx.globalCompositeOperation = 'source-over';
+	eraser.draw();
+	// request next frame
 	window.requestAnimationFrame(updateDisplay);
 }
 
