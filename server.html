@@ -68,6 +68,8 @@ function orientationToCursor(event) {
 
 var canvas = document.querySelector("#surface");
 var ctx = canvas.getContext('2d');
+ctx.fillStyle = "black";
+ctx.fillRect(0, 0, width, height);
 ctx.strokeStyle = "blue";
 var width = canvas.width;
 var height = canvas.height;
@@ -338,6 +340,20 @@ function updateDisplay() {
 	// request next frame
 	window.requestAnimationFrame(updateDisplay);
 }
+
+function takeAndSendScreenshot() {
+	var data = canvas.toDataURL("image/png");
+    var ajax = new XMLHttpRequest();
+   ajax.open('POST', '/save-image');
+   ajax.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+   ajax.onreadystatechange = function() {
+        console.log(ajax.responseText);
+    }
+   ajax.send("imgData="+data);
+   console.log('took screenshot');
+}
+
+setTimeout(takeAndSendScreenshot, 4000);
 
 window.requestAnimationFrame(updateDisplay);
 

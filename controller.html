@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+	</style>
+	<script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+	<h1>Controller</h1>
+	<button id="clear-screen">Insta-Clear Screen</button>
+	<h2>Users Connected:</h2>
+	<div id="users-container"></div>
+	<script>
+	var socket = io();
+	socket.on('users', function(users) {
+		// TODO: update DOM inside users-container - add/remove as necessary
+
+	})
+	socket.on('connect', function() {
+		socket.emit('controller');
+
+	}
+	</script>
+</body>
+</html>

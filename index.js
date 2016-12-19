@@ -3,8 +3,11 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require('path');
 var fs = require('fs');
+var bodyParser = require('body-parser');
 var WebSocketServer = require('ws').Server;
 var wss = WebSocketServer({port: 3001});
+
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 var isWin = /^win/.test(process.platform);
 var matlabPipe = undefined;
@@ -39,6 +42,12 @@ app.get('/buttonimg.jpg', function(req, res){
   res.sendFile('bttn_cntr.png',
    {root : __dirname+"/imgs"});
 });
+
+app.post('/save-image', function (req, res) {
+  //console.log(req.body);
+  var base64Encoded = req.body.imgData.replace(/^data:image\/png;base64,/, "");
+  fs.writeFile('out.png',base64Encoded,'base64',function (err) { console.log(err); });
+})
 
 var serverSockets = [];
 
