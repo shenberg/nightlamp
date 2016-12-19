@@ -245,7 +245,9 @@ function receivedOrientations(orientations) {
 }
 
 var socket = io();
-socket.emit("server-started");
+socket.on('connect', function() {
+	socket.emit("server-started");
+});
 //socket.on("orientation", handleOrientation); //getting the info from the accelerometer
 socket.on("orientations", receivedOrientations);
 
