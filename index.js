@@ -73,8 +73,9 @@ function batchSend() {
   }*/
   for(var i = 0; i < serverSockets.length; i++) {
     var server = serverSockets[i];
-    //server.emit("orientation", {x:msg[0],y:msg[1],touch:msg[2]});
-    server.emit("orientations", msgs);
+    // TODO: validate
+    //server.emit("orientations", msgs);
+    server.volatile.emit("orientations", msgs);
   }
 
   if (totalMsg.length > 0) {
