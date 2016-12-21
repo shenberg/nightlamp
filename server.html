@@ -345,11 +345,11 @@ function takeAndSendScreenshot() {
 	var data = canvas.toDataURL("image/png");
     var ajax = new XMLHttpRequest();
    ajax.open('POST', '/save-image');
-   ajax.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+   ajax.setRequestHeader('Content-Type', 'application/octet-stream');
    ajax.onreadystatechange = function() {
         console.log(ajax.responseText);
     }
-   ajax.send("imgData="+data);
+   ajax.send(data);
    console.log('took screenshot');
 }
 
