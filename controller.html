@@ -7,19 +7,72 @@
 </head>
 <body>
 	<h1>Controller</h1>
-	<button id="clear-screen">Insta-Clear Screen</button>
-	<h2>Users Connected:</h2>
+	<div>
+		<button id="clear-screen">Clear Screen</button>
+	</div>
+	<div>
+		<label>Clear Time</label><input id="clearTimer" type="range" min="60" max="3600" value="60">
+	</div>
+	<h1>Drawing</h1>
+	<div>
+		<label>Clones</label><input id="clones" type="range" min="1" max="6" value="1">
+	</div>
+	<div>
+		<label>Line Width</label><input id="lineWidth" type="range" min="1" max="20" value="10">
+	</div>
+	<h1>Users Connected:</h1>
 	<div id="users-container"></div>
 	<script>
+	var clearButton = document.getElementById("clear-screen");
+	var clearTimer = document.getElementById("clearTimer");
+	var clones = document.getElementById("clones");
+	var lineWidth = document.getElementById("lineWidth");
+	clearTimer.addEventListener('change', configChanged, false);
+	clones.addEventListener('change', configChanged, false);
+	lineWidth.addEventListener('change', configChanged, false);
+	clearButton.addEventListener('click', function(e) {
+		console.log('sending clear');
+		socket.emit('clear');
+	}, false);
+	function sendConfig(cfg) {
+		console.log('sending config:');
+		var cfg = {
+				"clearTimer": +clearTimer.value,
+				"clones": +clones.value,
+				"lineWidth": +lineWidth.value
+			};
+		console.log(cfg);
+		socket.emit('set-config', cfg);
+	}
+
+	function createUser(userId) {
+		console.log("creating user");
+	}
+
+	function configChanged() {
+		if (!pending) {
+			sendConfig();
+		}
+	}
+
+	var pending = true; // pending data from server
 	var socket = io();
 	socket.on('users', function(users) {
+		console.log('got users list: ' + users);
+		console.log(users);
 		// TODO: update DOM inside users-container - add/remove as necessary
-
-	})
+		for(var i = 0; i < users.length; i++) {
+			createUser(users[i]);
+		}
+	});
 	socket.on('connect', function() {
-		socket.emit('controller');
-
-	}
+		socket.emit('controller-started');
+		pending = false;
+	});	
+	socket.on('disconnect', function() {
+		// TODO: notify no connection visually
+		pending = true;
+	});
 	</script>
 </body>
 </html>

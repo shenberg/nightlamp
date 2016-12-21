@@ -94,6 +94,12 @@ var height = canvas.height;
 
 var users = {};
 
+var config = {
+	clearTimer: 60,
+	clones: 1,
+	lineWidth: 10
+};
+
 function drawCurve(ctx, pts) {
 	if (pts.length < 3) return;
 	ctx.beginPath();
@@ -257,7 +263,7 @@ function createShadowBrush(startX, startY) {
 	}
 
 	function draw() {
-		ctx.lineWidth = 10;
+		ctx.lineWidth = config.lineWidth;
 		ctx.shadowBlur = 20;
 		ctx.shadowColor = 'rgb(255, 165, 0)';
 		if (newInfo) {
@@ -409,6 +415,19 @@ socket.on('connect', function() {
 //socket.on("orientation", handleOrientation); //getting the info from the accelerometer
 socket.on("orientations", receivedOrientations);
 
+socket.on("config", function(cfg) {
+	console.log("got config from server");
+	console.log(cfg);
+	config = cfg;
+});
+
+socket.on("clear", function() {
+	if (!eraser) {
+		eraser = createEraser(5); // 10 secs to erase;
+		eraseStart = +new Date;
+	}
+});
+
 function pushNewPoints(ptsList, newDest, maxPoints) {
 	var lastPt = ptsList[ptsList.length - 1];
 
@@ -521,7 +540,7 @@ function updateDisplay() {
 	ctx.globalCompositeOperation = 'lighter';
 	ctx.lineWidth = 1;
 	ctx.setTransform(1,0,0,1,0,0);
-	var cloneCount = 4;
+	var cloneCount = config.clones;
 	if (cloneCount > 1) {
 		for(var i = 0; i < cloneCount; i++) {
 			ctx.translate(width/2, height/2);
@@ -547,7 +566,7 @@ function updateDisplay() {
 		}
 	}
 	ctx.setTransform(1,0,0,1,0,0);
-	if (!eraser && (now - eraseStart > TIME_BETWEEN_ERASE)) {
+	if (!eraser && (now - eraseStart > config.clearTimer*1000)) {
 		eraser = createEraser(5); // 10 secs to erase;
 		eraseStart = now;
 	}

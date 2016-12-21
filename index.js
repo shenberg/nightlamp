@@ -39,6 +39,10 @@ app.get('/server2', function(req, res){
   res.sendFile('raw_ws_server.html', {root : __dirname});
 });
 
+app.get('/controller', function(req, res){
+  res.sendFile('controller.html', {root : __dirname});
+});
+
 app.get('/buttonimg.jpg', function(req, res){
   res.sendFile('bttn_cntr.png',
    {root : __dirname+"/imgs"});
@@ -54,7 +58,8 @@ app.post('/save-image', function (req, res) {
   res.sendStatus(200);
 });
 
-var serverSockets = [];
+var serverSockets = [],
+    controllerSockets = [];
 
 var matlabSocket = undefined;
 wss.on('connection', function connection(ws) {
@@ -104,7 +109,8 @@ function batchSend() {
     setTimeout(batchSend, 33);
   }
 }
-
+var config = {};
+// TODO: use rooms instead of manually managing shit
 io.on('connection', function(socket){
   console.log('a user connected');
   usersConnected += 1;
@@ -113,18 +119,21 @@ io.on('connection', function(socket){
   }
 
   socket.on('disconnect', function(){
-  	if (!socket.isServer) {
+  	if (!socket.isServer && !socket.isController) {
       usersConnected -= 1;
 	    console.log('user disconnected');
       var uid = socket.userId;
       if (uid !== undefined) {
         delete msgs[uid];
       }
-  	} else {
+  	} else if (socket.isServer) {
   		// socket is server socket
   		serverSockets.splice(serverSockets.indexOf(socket), 1);
   		console.log("server disconnected");
-  	}
+  	} else {
+      controllerSockets.splice(controllerSockets.indexOf(socket), 1);
+      console.log("controller disconnected");
+    }
   });
   socket.on("orientation", function(msg) {
   	//console.log(msg.user_id + ": (" + msg.x + "," + msg.y + "," + msg.touch + ")");
@@ -146,6 +155,25 @@ io.on('connection', function(socket){
   	console.log("user is server!");
   	serverSockets.push(socket);
   	socket.isServer = true;
+  });
+  socket.on("controller-started", function(msg) {
+    usersConnected -= 1;
+    console.log("user is controller!");
+    controllerSockets.push(socket);
+    socket.isController = true;
+    socket.on("set-config", function(cfg) {
+      for(var i = 0; i < serverSockets.length; i++) {
+        var server = serverSockets[i];
+        server.emit("config", cfg);
+      }
+    });
+    socket.on("clear", function() {
+      for(var i = 0; i < serverSockets.length; i++) {
+        var server = serverSockets[i];
+        server.emit("clear");
+      }
+    });
+    socket.emit("users", Object.keys(msgs));
   });
 });
 
