@@ -323,7 +323,7 @@ function createEraser(secondsPerCycle) {
 	return {"draw": draw};
 }
 
-var eraser = createEraser(10);
+var eraser = createEraser(30);
 
 function updateDisplay() {
 	// draw all strokes
@@ -351,6 +351,7 @@ function takeAndSendScreenshot() {
     }
    ajax.send(data);
    console.log('took screenshot');
+   crap = data;
 }
 
 setTimeout(takeAndSendScreenshot, 4000);
