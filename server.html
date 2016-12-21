@@ -510,8 +510,8 @@ function takeAndSendScreenshot() {
    ajax.send(data);
    console.log('took screenshot');
 }
-
-setTimeout(takeAndSendScreenshot, 4000);
+//use with setInterval
+//setTimeout(takeAndSendScreenshot, 4000);
 
 window.requestAnimationFrame(updateDisplay);
 
