@@ -11,14 +11,23 @@
 		<button id="clear-screen">Clear Screen</button>
 	</div>
 	<div>
-		<label>Clear Time</label><input id="clearTimer" type="range" min="60" max="3600" value="60">
+		<label>Clear Time: </label><out id="ctVal"></out>
+	</div>
+	<div>
+		1min<input id="clearTimer" type="range" min="60" max="3600" value="60">60mins
 	</div>
 	<h1>Drawing</h1>
 	<div>
-		<label>Clones</label><input id="clones" type="range" min="1" max="6" value="1">
+		<label>Clones: </label><out id="clVal"></out>
 	</div>
 	<div>
-		<label>Line Width</label><input id="lineWidth" type="range" min="1" max="20" value="10">
+		1<input id="clones" type="range" min="1" max="6" value="1">6
+	</div>
+	<div>
+		<label>Line Width: </label><out id="lwVal"></out>
+	</div>
+	<div>
+		1<input id="lineWidth" type="range" min="1" max="20" value="10">20
 	</div>
 	<h1>Users Connected:</h1>
 	<div id="users-container"></div>
@@ -49,7 +58,14 @@
 		console.log("creating user");
 	}
 
+	function updateDisplays() {
+		document.getElementById("ctVal").innerHTML = clearTimer.value / 60 | 0;
+		document.getElementById("clVal").innerHTML = clones.value;
+		document.getElementById("lwVal").innerHTML = lineWidth.value;
+	}
+
 	function configChanged() {
+		updateDisplays();
 		if (!pending) {
 			sendConfig();
 		}
@@ -73,6 +89,7 @@
 		// TODO: notify no connection visually
 		pending = true;
 	});
+	updateDisplays();
 	</script>
 </body>
 </html>
