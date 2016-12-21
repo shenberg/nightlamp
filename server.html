@@ -428,22 +428,73 @@ function createEraser(secondsPerCycle) {
 		ctx.lineTo((width / 2) + dx*width, (height / 2) + dy*width);
 		ctx.stroke();
 	}
-	return {"draw": draw};
+	function alive() {
+		return ((+new Date) - startTime) <= secondsPerCycle*1000 + 150; // extra 150 ms for good measure
+	}
+	function kill() {
+		var lastAngle = timeToAngle(lastTime),
+			dx = Math.cos(lastAngle),
+			dy = Math.sin(lastAngle);
+		// erase the hand of the clock
+		ctx.globalCompositeOperation = 'source-over';
+		ctx.lineWidth = 11; // TODO: un-hardcode
+		ctx.strokeStyle = "black";
+		ctx.beginPath();
+		ctx.moveTo(width / 2, height / 2);
+		ctx.lineTo((width / 2) + dx*width, (height / 2) + dy*width);
+		ctx.stroke();
+
+	}
+	return {
+			"draw": draw,
+			"alive": alive,
+			"kill": kill
+		};
 }
 
-var eraser = createEraser(30);
+var eraser;// = createEraser(30);
+
+var eraseStart = +new Date;
+var TIME_BETWEEN_ERASE = 20*1000; // 20 secs
 
 function updateDisplay() {
+	var now = +new Date;
 	// draw all strokes
 	ctx.globalCompositeOperation = 'lighter';
 	ctx.lineWidth = 1;
-	for (var userId in users) {
-		if (users.hasOwnProperty(userId)) {
-			users[userId].draw();
+	ctx.setTransform(1,0,0,1,0,0);
+	var cloneCount = 2;
+	if (cloneCount > 1) {
+		for(var i = 0; i < cloneCount; i++) {
+			ctx.translate(width/2, height/2);
+			ctx.rotate(2*Math.PI/cloneCount);
+			ctx.translate(-width/2, -height/2);
+			for (var userId in users) {
+				if (users.hasOwnProperty(userId)) {
+					users[userId].draw();
+				}
+			}
+		}
+	} else {
+		for (var userId in users) {
+			if (users.hasOwnProperty(userId)) {
+				users[userId].draw();
+			}
 		}
 	}
-	// draw image 
-	eraser.draw();
+	ctx.setTransform(1,0,0,1,0,0);
+	if (!eraser && (now - eraseStart > TIME_BETWEEN_ERASE)) {
+		eraser = createEraser(5); // 10 secs to erase;
+		eraseStart = now;
+	}
+	if (eraser) {
+		// draw image 
+		eraser.draw();
+		if (!eraser.alive()) {
+			eraser.kill();
+			eraser = null;
+		}
+	}
 	// request next frame
 	window.requestAnimationFrame(updateDisplay);
 }
