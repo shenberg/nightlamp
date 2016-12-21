@@ -329,6 +329,34 @@ window.addEventListener('orientationchange', function () {
       document.body.removeAttribute('style');
     }
   }, true);
+
+// TODO: share with server
+// random int -> [r, g, b] (each in range 0..255)
+function userIdToColor(userId) {
+  // assume userId is random
+  var hue = userId % 768;
+  if (hue < 256) {
+    return [255 - hue, hue, 0];
+  }
+  // if hue in range 256..511
+  if (hue < 512) {
+    hue -= 256;
+    return [0, 255 - hue, hue];
+  }
+  // hue in range 512..767
+  hue -= 512;
+  return [hue, 0, 255 - hue];
+}
+
+function RGBToCSS(color, alpha) {
+  if (alpha === undefined) {
+    alpha = 1;
+  }
+  return 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + alpha + ')';
+}
+
+// set draw button color to user's color
+drawButton.style.background = RGBToCSS(userIdToColor(userId));
 	</script>
 
 	</body>
