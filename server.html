@@ -92,11 +92,35 @@ function drawCurve(ctx, pts) {
 	ctx.stroke();
 }
 
+// random int -> [r, g, b] (each in range 0..255)
+function userIdToColor(userId) {
+	// assume userId is random
+	var hue = userId % 768;
+	if (hue < 256) {
+		return [255 - hue, hue, 0];
+	}
+	// if hue in range 256..511
+	if (hue < 512) {
+		hue -= 256;
+		return [0, 255 - hue, hue];
+	}
+	// hue in range 512..767
+	hue -= 512;
+	return [hue, 0, 255 - hue];
+}
 
-function createBall(userId) {
+function RGBToCSS(color, alpha) {
+	if (alpha === undefined) {
+		alpha = 1;
+	}
+	return 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + alpha + ')';
+}
+
+function createBall(color) {
 	// TODO:
 	var ball = document.createElement("div");
 	ball.className = "ball";
+	ball.style.background = RGBToCSS(color);
 	document.querySelector(".garden").appendChild(ball);
 	return ball;
 }
@@ -151,8 +175,9 @@ function createUser(userId) {
 		lastY = 0;
 
 	var touchState = 0; // if state == 1 then draw
+	var color = userIdToColor(userId);
 
-	var ball = createBall(userId);
+	var ball = createBall(color);
 
 	var strokes = [];
 	var currentStroke = null;
@@ -270,6 +295,8 @@ function pushNewPoints(ptsList, newDest) {
 	if (ptsList.length > 200) {
 		ptsList.shift();
 	}
+
+	// ptsList.splice(0,ptsList.length - 200);
 }
 
 function randomWalk(ptsList) {
