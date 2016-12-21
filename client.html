@@ -261,6 +261,7 @@ function orientationToCursor(event, center) {
 
 //document.querySelector(".draw-button").addEventListener("mousedown", handleDown, false);
 //document.querySelector(".draw-button").addEventListener("mouseup", handleUp, false);
+var lastTouchState = 0;
 var lastXY;
 var ALPHA = 0.5;
 function filter(xy, lastOut, alpha) {
@@ -275,6 +276,13 @@ function handleOrientation(event) {
     rawCenter.beta = event.beta;
     lastXY = undefined;
     first = false;
+  }
+
+  if (lastTouchState != touchState) {
+    if (touchState > 0) {
+      vibrate();
+    }
+    lastTouchState = touchState;
   }
 
   output.innerHTML  = "alpha: " + event.alpha + "\n";
@@ -332,9 +340,16 @@ window.addEventListener('orientationchange', function () {
     }
   }, true);
 
+
+function vibrate() {
+  if (navigator.vibrate) {
+    navigator.vibrate(150);
+  }
+}
+
 // TODO: share with server
 // random int -> [r, g, b] (each in range 0..255)
-function userIdToColor(userId) {
+/*function userIdToColor(userId) {
   // assume userId is random
   var hue = userId % 768;
   if (hue < 256) {
@@ -348,6 +363,41 @@ function userIdToColor(userId) {
   // hue in range 512..767
   hue -= 512;
   return [hue, 0, 255 - hue];
+}*/
+var colors = [[255, 0, 0],
+  [255, 0, 64],
+  [255, 0, 128],
+  [255, 0, 191],
+  [255, 0, 255],
+  [255, 51, 0],
+  [255, 51, 64],
+  [255, 51, 128],
+  [255, 51, 191],
+  [255, 51, 255],
+  [255, 102, 0],
+  [255, 102, 64],
+  [255, 102, 128],
+  [255, 102, 191],
+  [255, 102, 255],
+  [255, 153, 0],
+  [255, 153, 64],
+  [255, 153, 128],
+  [255, 153, 191],
+  [255, 153, 255],
+  [255, 204, 0],
+  [255, 204, 64],
+  [255, 204, 128],
+  [255, 204, 191],
+  [255, 204, 255],
+  [255, 255, 0],
+  [255, 255, 64],
+  [255, 255, 128],
+  [255, 255, 191],
+  [255, 255, 255]];
+function userIdToColor(userId) {
+  console.log(userId);
+  console.log(colors[userId % colors.length]);
+  return colors[userId % colors.length];
 }
 
 function RGBToCSS(color, alpha) {
