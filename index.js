@@ -49,11 +49,7 @@ app.get('/sstest', function(req,res) {
 });
 
 app.post('/save-image', function (req, res) {
-  //console.log(req.body);
-  var base64Encoded = req.body.slice(22); // skip data:img
-  //console.log(base64Encoded.length);
-  //console.log(buffer.transcode(base64Encoded,'base64','binary').length);
-  //fs.writeFile('out.b64',base64Encoded,function (err) { console.log(err); });
+  var base64Encoded = req.body.slice(22); // skip data:image/png,base64,
   fs.writeFile('out.png',base64Encoded.toString(), 'base64', function (err) { console.log(err); });
   res.sendStatus(200);
 });
