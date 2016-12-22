@@ -48,6 +48,14 @@ app.get('/buttonimg.jpg', function(req, res){
    {root : __dirname+"/imgs"});
 });
 
+app.get('/left-image.jpg', function(req, res) {
+  res.sendFile('poster2.jpg', {root : __dirname});  
+});
+app.get('/right-image.jpg', function(req, res) {
+  res.sendFile('poster2.jpg', {root : __dirname});  
+});
+
+
 app.get('/sstest', function(req,res) {
   res.sendFile('out.png',{root: __dirname});
 });
