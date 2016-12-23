@@ -73,6 +73,10 @@
     /*margin: auto;*/
   }
 
+  div {
+    color: yellow;
+  }
+
   body {
     overflow: hidden;
     background: black;
@@ -90,8 +94,11 @@
         </div>
       </div>
     </div>
-		<pre class="output"></pre>
-
+    <div style='margin-top: 150px'>
+      <div>Luminous is a digital art installation by Orian Sharoni, Ronnny Ziss &amp; Roee Shenberg.</div>
+      <div>Luminous invites you to participate in a multi-user ephemeral graffiti arena.</div>
+      <div>The installation was created using HTML5+Javascript+Node.JS. For any questions, contact Orian Sharoni, Ronny Ziss or Roee Shenberg on Facebook, or call Ronny @ 054-6462442</div>
+    </div>
 	<script>
 
 function getUserId() {
@@ -128,7 +135,6 @@ console.log("User ID: " + userId);
 
 var ball   = document.querySelector('.ball');
 var garden = document.querySelector('.garden');
-var output = document.querySelector('.output');
 
 var maxX = garden.clientWidth  - ball.clientWidth;
 var maxY = garden.clientHeight - ball.clientHeight;
@@ -285,8 +291,6 @@ function handleOrientation(event) {
     lastTouchState = touchState;
   }
 
-  output.innerHTML  = "alpha: " + event.alpha + "\n";
-  output.innerHTML += "beta: " + event.beta + "\n";
 
   var xy = orientationToCursor(event, rawCenter);
   // filtering: comment-in to enable again
