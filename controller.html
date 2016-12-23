@@ -2,35 +2,44 @@
 <html>
 <head>
 	<style>
+
+
+.controller-stuff {
+	width: 60%;
+    height: 200px;
+    font-size: 100px;
+}
+
 	</style>
 	<script src="/socket.io/socket.io.js"></script>
 </head>
+
 <body>
 	<h1>Controller</h1>
 	<div>
-		<button id="clear-screen">Clear Screen</button>
+		<button id="clear-screen" class="controller-stuff" >Clear Screen</button>
 	</div>
 	<div>
-		<label>Clear Time: </label><out id="ctVal"></out>
+		<label>Clear Time: </label><out id="ctVal" class="controller-stuff" ></out>
 	</div>
 	<div>
-		10secs<input id="clearTimer" type="range" min="10" max="360" value="60">360secs
+		10secs<input id="clearTimer" class="controller-stuff" type="range" min="10" max="360" value="60">360secs
 	</div>
 	<h1>Drawing</h1>
 	<div>
-		<label>Clones: </label><out id="clVal"></out>
+		<label>Clones: </label><out id="clVal" class="controller-stuff" ></out>
 	</div>
 	<div>
-		1<input id="clones" type="range" min="1" max="6" value="1">6
+		1<input id="clones" class="controller-stuff" type="range" min="1" max="6" value="1">6
 	</div>
 	<div>
-		<label>Line Width: </label><out id="lwVal"></out>
+		<label>Line Width: </label><out id="lwVal" class="controller-stuff" ></out>
 	</div>
 	<div>
-		1<input id="lineWidth" type="range" min="1" max="20" value="10">20
+		1<input id="lineWidth" class="controller-stuff" type="range" min="1" max="20" value="10">20
 	</div>
 	<h1>Users Connected:</h1>
-	<div id="users-container"></div>
+	<div id="users-container" class="controller-stuff"></div>
 	<script>
 	var clearButton = document.getElementById("clear-screen");
 	var clearTimer = document.getElementById("clearTimer");
