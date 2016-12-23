@@ -49,7 +49,7 @@ app.get('/buttonimg.jpg', function(req, res){
 });
 
 app.get('/buttonPBRUSHimg.jpg', function(req, res){
-  res.sendFile('pbrush.png',
+  res.sendFile('pbrush1.png',
    {root : __dirname+"/imgs"});
 });
 

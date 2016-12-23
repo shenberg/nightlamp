@@ -343,7 +343,7 @@ window.addEventListener('orientationchange', function () {
 
 function vibrate() {
   if (navigator.vibrate) {
-    navigator.vibrate(150);
+    navigator.vibrate(80);
   }
 }
 
@@ -408,7 +408,9 @@ function RGBToCSS(color, alpha) {
 }
 
 // set draw button color to user's color
+//drawButton.style.background = RGBToCSS(userIdToColor(userId));
 drawButton.style.background = RGBToCSS(userIdToColor(userId));
+
 	</script>
 
 	</body>
