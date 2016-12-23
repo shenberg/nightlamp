@@ -14,7 +14,7 @@
 		<label>Clear Time: </label><out id="ctVal"></out>
 	</div>
 	<div>
-		1min<input id="clearTimer" type="range" min="60" max="3600" value="60">60mins
+		10secs<input id="clearTimer" type="range" min="10" max="360" value="60">360secs
 	</div>
 	<h1>Drawing</h1>
 	<div>
@@ -59,7 +59,7 @@
 	}
 
 	function updateDisplays() {
-		document.getElementById("ctVal").innerHTML = clearTimer.value / 60 | 0;
+		document.getElementById("ctVal").innerHTML = clearTimer.value;
 		document.getElementById("clVal").innerHTML = clones.value;
 		document.getElementById("lwVal").innerHTML = lineWidth.value;
 	}

@@ -453,7 +453,7 @@ socket.on("config", function(cfg) {
 
 socket.on("clear", function() {
 	if (!eraser) {
-		eraser = createEraser(5); // 10 secs to erase;
+		eraser = createEraser(2.5); // 10 secs to erase;
 		eraseStart = +new Date;
 	}
 });
@@ -597,7 +597,7 @@ function updateDisplay() {
 	}
 	ctx.setTransform(1,0,0,1,0,0);
 	if (!eraser && (now - eraseStart > config.clearTimer*1000)) {
-		eraser = createEraser(5); // 10 secs to erase;
+		eraser = createEraser(2.5); // 10 secs to erase;
 		eraseStart = now;
 	}
 	if (eraser) {
