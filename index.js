@@ -54,7 +54,7 @@ app.get('/buttonPBRUSHimg.jpg', function(req, res){
 });
 
 app.get('/left-image.jpg', function(req, res) {
-  res.sendFile('poster2.jpg', {root : __dirname});  
+  res.sendFile('poster5.jpg', {root : __dirname});  
 });
 app.get('/right-image.jpg', function(req, res) {
   res.sendFile('poster2.jpg', {root : __dirname});  
