@@ -168,7 +168,8 @@ function drawLine(ctx, pts) {
 	hue -= 512;
 	return [hue, 0, 255 - hue];
 }*/
-var colors = [[216, 0, 249],
+
+var colors = [[216, 0, 249]
   [12, 237, 199],
   [255, 0, 60],
   [255, 0, 158],
@@ -252,7 +253,7 @@ function createShadowBrush(startX, startY, color) {
 	var lastX = startX,
 		lastY = startY,
 		newInfo = false,
-		shadowColor = 'rgb(255, 165, 0)';//RGBToCSS(color);
+		shadowColor = RGBToCSS(color); //was rgb(255, 165, 0) also nice: rgb(224, 33, 33) //'rgb(255, 165, 0)';
 
 	var MAX_UPDATES = 10;
 	var framesSinceUpdate = 0;
