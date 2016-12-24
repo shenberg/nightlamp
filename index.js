@@ -1,6 +1,6 @@
 var app = require('express')();
 var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var io = require('socket.io')(http, {pingTimeout: 20000, pingInterval: 10000});
 var path = require('path');
 var fs = require('fs');
 var bodyParser = require('body-parser');
@@ -119,7 +119,7 @@ function batchSend() {
     }
   }
   if (usersConnected > 0) {
-    setTimeout(batchSend, 33);
+    setTimeout(batchSend, 16);
   }
 }
 var config = {};

@@ -311,7 +311,7 @@ function handleOrientation(event) {
       "touch": touchState
     });
 }
-var socket = io(); //send/recieve msgs
+var socket = io({reconnectionDelayMax: 10000}); //send/recieve msgs
 window.addEventListener("deviceorientation", handleOrientation, true);
 // disable zoom on iOS Safari 10+
 document.addEventListener('gesturestart', function (e) {
