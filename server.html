@@ -302,7 +302,7 @@ function createShadowBrush(startX, startY, color) {
 			ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
 			ctx.stroke(); //DRAW IT!
 		}
-		ctx.strokeStyle = "#050505";
+		ctx.strokeStyle = 'rgba(255,255,255,0.01)';//"#050505";
 		//randomWalk(pts);
 		drawLine(ctx, pts);
 
@@ -536,7 +536,7 @@ function createEraser(secondsPerCycle) {
 		ctx.stroke();
 	}
 	function alive() {
-		return ((+new Date) - startTime) <= secondsPerCycle*1000 + 150; // extra 150 ms for good measure
+		return ((+new Date) - startTime) <= secondsPerCycle*1000 + 50; // extra 50 ms for good measure
 	}
 	function kill() {
 		var lastAngle = timeToAngle(lastTime),
