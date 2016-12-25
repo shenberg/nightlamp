@@ -36,7 +36,7 @@ app.get('/server', function(req, res){
 });
 
 app.get('/server2', function(req, res){
-  res.sendFile('raw_ws_server.html', {root : __dirname});
+  res.sendFile('server2.html', {root : __dirname});
 });
 
 app.get('/controller', function(req, res){

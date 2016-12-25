@@ -42,143 +42,27 @@
 		<pre class="output"></pre>
 
 	<script>
-
-var ball   = document.querySelector('.ball');
-var garden = document.querySelector('.garden');
-var output = document.querySelector('.output');
-
-var maxX = garden.clientWidth  - ball.clientWidth;
-var maxY = garden.clientHeight - ball.clientHeight;
-
-var fovX = 60;
-var fovY = 45;
-
-// maybe this is how its done?
-
-var particles = []
-
-	var particle_count = 100;
-	for(var i = 0; i < particle_count; i++)
-	{
-		particles.push(new particle());
-	}
-
-
-function clamp01(val) { if (val < 0) return 0; if (val > 1) return 1; return val; }
-
-function fixAngle(angle) {
-  if (angle > 180) return angle - 360;
-  if (angle < -180) return angle + 360;
-  return angle;
-}
-function orientationToCursor(event) {
-  return {x: clamp01((fixAngle(event.alpha)/(-fovX)) + 0.5),
-          y: clamp01(event.beta / (-fovY) + 0.5)};
+	function setUserId(userId) {
+  document.cookie = "user_id=" + userId + "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
 }
 
-var canvas = document.querySelector("#surface");
-var ctx = canvas.getContext('2d');
-ctx.strokeStyle = "blue";
-var width = canvas.clientWidth;
-var height = canvas.clientHeight;
-
-var lastX = 0,
-	lastY = 0;
-
-var first = true;
-
-function handleOrientation(event) {
-  if (first) {
-  	lastX = event.x;
-  	lastY = event.y;
-  	first = false;
-  	return;
+// random number in range 1..2**32-1
+function randomUserId() {
+  var result = 0;
+  while (!result) {
+    if (window.crypto !== undefined && window.crypto.getRandomValues !== undefined) {
+      var res = new Uint32Array(1);
+      window.crypto.getRandomValues(res);
+      result = res[0];
+    } else {
+      result = Math.floor(Math.random() * ((1<<30)*4 - 1)) + 1;
+    }
   }
-
-// Simple line:
-/*
-  ctx.beginPath();
-  ctx.moveTo(lastX*width, lastY*height);
-  ctx.lineTo(event.x*width, event.y*height);
-  ctx.stroke();
-  lastX = event.x;
-  lastY = event.y;
-  console.log(event.alpha);
-
-  // 10 is half the size of the ball
-  // It center the positioning point to the center of the ball
-  ball.style.top  = (maxX*event.y) + "px";
-  ball.style.left = (maxY*event.x) + "px";
-*/
-
-// OK so supposedly the flaky juice should be put here:
-
-
-		//speed, life, location, life, colors
-		//speed.x range = -2.5 to 2.5 
-		//speed.y range = -15 to -5 to make it move upwards
-		//lets change the Y speed to make it look like a flame
-		this.speed = {x: -2.5+Math.random()*5, y: -15+Math.random()*10};
-		//location = mouse coordinates
-		//Now the flame follows the mouse coordinates
-		if(event.x && event.y)
-		{
-			this.location = {x: event.x, y: event.y};
-		}
-		else
-		{
-			this.location = {x: width/2, y: height/2};
-		}
-		//radius range = 10-30
-		this.radius = 10+Math.random()*20;
-		//life range = 20-30
-		this.life = 20+Math.random()*10;
-		this.remaining_life = this.life;
-		//colors
-		this.r = Math.round(Math.random()*255);
-		this.g = Math.round(Math.random()*255);
-		this.b = Math.round(Math.random()*255);
-	
-
-
-		for(var i = 0; i < particles.length; i++)
-		{
-			var p = particles[i];
-			ctx.beginPath();
-			//changing opacity according to the life.
-			//opacity goes to 0 at the end of life of a particle
-			p.opacity = Math.round(p.remaining_life/p.life*100)/100
-			//a gradient instead of white fill
-			var gradient = ctx.createRadialGradient(p.location.x, p.location.y, 0, p.location.x, p.location.y, p.radius);
-			gradient.addColorStop(0, "rgba("+p.r+", "+p.g+", "+p.b+", "+p.opacity+")");
-			gradient.addColorStop(0.5, "rgba("+p.r+", "+p.g+", "+p.b+", "+p.opacity+")");
-			gradient.addColorStop(1, "rgba("+p.r+", "+p.g+", "+p.b+", 0)");
-			ctx.fillStyle = gradient;
-			ctx.arc(p.location.x, p.location.y, p.radius, Math.PI*2, false);
-			ctx.fill();
-			
-			//lets move the particles
-			p.remaining_life--;
-			p.radius--;
-			p.location.x += p.speed.x;
-			p.location.y += p.speed.y;
-			
-			//regenerate particles
-			if(p.remaining_life < 0 || p.radius < 0)
-			{
-				//a brand new particle replacing the dead one
-				particles[i] = new particle();
-
-
-
-
-
-
+  return result;
 }
-var socket = io();
-socket.emit("server-started");
-socket.on("orientation", handleOrientation);
-
+  console.log("Generating User ID");
+  userId = randomUserId();
+  setUserId(userId);
 	</script>
 
 	</body>
